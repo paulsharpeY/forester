@@ -64,8 +64,7 @@ forester <- function(left_side_data,
                     add_plot_gap = FALSE,
                     point_sizes = 3,
                     point_shapes = 16,
-                    center_ggplot = NULL,
-                    ...){
+                    center_ggplot = NULL){
 
   theme <- gridExtra::ttheme_minimal(core=list(
     fg_params = list(hjust = 0, x = 0.05, fontfamily = font_family),
@@ -289,8 +288,7 @@ forester <- function(left_side_data,
     ggplot2::scale_y_continuous(expand = c(0,0)) +
     ggplot2::scale_shape_identity() +
     ggplot2::scale_size_identity() +
-      ggplot2::xlab("") +
-      ggplot2::geom_vline(...)
+      ggplot2::xlab("")
 
   ### add oob arrows if required ###
 
@@ -511,13 +509,12 @@ forester <- function(left_side_data,
          width = png_width, units = "in",
          filename = file_path)
 
-  # disable until imagemagick dev libs available
-  # if(display == TRUE){
-  #   magick::image_resize(magick::image_read(file_path),
-  #                        paste0(grDevices::dev.size("px")[1],
-  #                               "x",
-  #                               grDevices::dev.size("px")[2]))
-  # }
+  if(display == TRUE){
+    magick::image_resize(magick::image_read(file_path),
+                         paste0(grDevices::dev.size("px")[1],
+                                "x",
+                                grDevices::dev.size("px")[2]))
+  }
 }
 
 
