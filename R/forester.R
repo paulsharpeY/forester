@@ -64,7 +64,8 @@ forester <- function(left_side_data,
                     add_plot_gap = FALSE,
                     point_sizes = 3,
                     point_shapes = 16,
-                    center_ggplot = NULL){
+                    center_ggplot = NULL,
+                    seg = NULL){
 
   theme <- gridExtra::ttheme_minimal(core=list(
     fg_params = list(hjust = 0, x = 0.05, fontfamily = font_family),
@@ -205,7 +206,6 @@ forester <- function(left_side_data,
 
   gdata$row_num <- (nrow(gdata) - 1):0
 
-
   h_adj <- dplyr::case_when(
     font_family == "mono" ~ 0.2,
     font_family == "serif" ~ .43,
@@ -214,7 +214,6 @@ forester <- function(left_side_data,
   )
 
   h_adj <- nudge_y + h_adj
-
 
   slope_adj <- dplyr::case_when(
     font_family == "mono" ~ -0.175,
@@ -228,6 +227,10 @@ forester <- function(left_side_data,
   y_low <- -.5 + font_adj + -.1381 * log(nrow(gdata))
   y_high <- 1.017 * nrow(gdata) - 0.6
 
+  ### set endpoints for geom_segment()
+  if (! is.null(seg)) {
+    seg <- seg %>% mutate(y = 1.017 * start - 0.6, yend = 1.017 * end - 0.6)
+  }
   #### add shapes and sizes to gdata ########
 
   gdata$shape <- point_shapes
@@ -392,6 +395,13 @@ forester <- function(left_side_data,
 
   }
 
+  ### add line segments
+  for (i in nrow(seg)) {
+    center <- center + geom_segment(data = seg, aes(x = x, y = y,
+                                                    xend = xend, yend = yend,
+                                                    colour=colour))
+  }
+  center <- center + scale_colour_identity()
 
   ######### using patchwork, overlay the ggplot on the table ###################
 
